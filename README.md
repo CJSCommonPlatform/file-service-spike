@@ -68,4 +68,31 @@ Return the tokens (UUIDs) of files that satisfy the search criteria.
 ...
 
 
+## Constraints
+
+| Constraint                       |                                          |
+| -------------------------------- |----------------------------------------- | 
+| Maximum number of files in dir   | 2 pow 64 (decided by storage pool max)   |
+| Maximum number of directories    | 2 pow 64 (decided by storage pool max)   |
+
+
+## Benchmarks
+
+| File-Sizes      | Throughput |
+| ----------------|----------- | 
+| 1KB             |            |
+| 10KB            |            |
+| 100KB           |            |
+| 1MB             |            |
+| 10MB            |            |
+| 100MB           |            |
+
+
+## Migration
+
+1. Create a bigger storage pool cluster
+2. Push files from one pool to other using the same process flow.
+
+
+
 
