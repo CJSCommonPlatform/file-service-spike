@@ -1,6 +1,21 @@
 # File Service
 A file service with a REST API
 
+## Status
+Work in Progress
+
+## Storage
+
+Create UUID, pass it through the consistent hash and store file in directory, return UUID in response.
+
+### Retrieval
+
+Get UUID, pass it through the consistent hash, get directory, return file in response.
+
+
+![storage](file-service.png)
+
+
 ## REST API
 
 
@@ -18,13 +33,13 @@ Get an object from the file store using the token (UUID)
 
 Delete an object in the file store using the token (UUID)
 
-### POST tags
+### POST keywords
 
-Post tags about an object in the file store.
+Post keywords about an object in the file store.
 
 This operation requires a token (UUID).
 
-The tags will be indexed and used for file search/retrieval.
+The keywords will be indexed and used for file search/retrieval.
 
 ### SEARCH File
 
@@ -50,3 +65,7 @@ Return the tokens (UUIDs) of files that satisfy the search criteria.
 | text/xml           | xml  |
 | image/jpeg         | jpg  |
 | image/png          | png  | 
+...
+
+
+
