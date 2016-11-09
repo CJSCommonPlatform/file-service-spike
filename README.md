@@ -25,6 +25,10 @@ Put an object to the file store.
 
 This operation returns a token (UUID).
 
+The actual file name is stored as meta data
+
+The file is stored as blob with UUID as name
+
 ### GET File
 
 Get an object from the file store using the token (UUID)
@@ -54,6 +58,16 @@ Return the tokens (UUIDs) of files that satisfy the search criteria.
 | Content-Type       | text/html     | See supported Content Types section |
 ...
 Access control headers
+
+## Metadata JSON fields
+
+Metadata is stored as JSON and key fields include
+
+| Field Name         | Example                 | Description  |
+| ------------------ |:-----------------------:| -----:|
+| Content-Type       | application/msword      | The content type from the headers |
+| Content-Length     | 1200                    | The content type from the headers | 
+| File-Name           | witnessstatements.doc  | The actual file name |
 
 
 ## Supported Content Types
