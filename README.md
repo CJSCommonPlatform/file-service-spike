@@ -87,6 +87,10 @@ Return the tokens (UUIDs) of files that satisfy the search criteria.
 | 10MB            |            |
 | 100MB           |            |
 
+## Setup
+1. Create DFS Storage Pool
+2. Create fixed number of directories in storage pool, suffixed by number, following a pattern
+   Example: dir-1, dir-2 dir-3....
 
 ## Migration
 
