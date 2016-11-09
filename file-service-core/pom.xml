@@ -13,6 +13,10 @@
 	<artifactId>file-service-core</artifactId>
 
 	<dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
