@@ -52,7 +52,8 @@ Return the tokens (UUIDs) of files that satisfy the search criteria.
 | ------------------ |:-------------:| -----:|
 | Content-Length     | 1200          | All requests include a valid Content-Length header |
 | Content-Type       | text/html     | See supported Content Types section |
-
+...
+Access control headers
 
 
 ## Supported Content Types
@@ -86,11 +87,21 @@ Return the tokens (UUIDs) of files that satisfy the search criteria.
 | 1MB             |            |
 | 10MB            |            |
 | 100MB           |            |
+| 1GB             |            |
+| 10GB            |            |
+
 
 ## Setup
 1. Create DFS Storage Pool
 2. Create fixed number of directories in storage pool, suffixed by number, following a pattern
    Example: dir-1, dir-2 dir-3....
+
+## Important
+
+** The directory structure is considered frozen once in use **
+
+** The number of directories once in use cannot be changed without "Migration" **
+
 
 ## Migration
 
