@@ -37,9 +37,8 @@ public class FileLookup {
      * @return the file name
      */
     public String getFileName(final UUID uuid) {
-        int bucket = getBucket(uuid, directoryPath.getNumberDirectories());
-        String dp = directoryPath.getDirectoryPath();
-        
-        return join("",dp,valueOf(bucket));
+        return join("", directoryPath.getDirectoryPath(),
+                        valueOf(getBucket(uuid, directoryPath.getNumberDirectories())), "/",
+                        uuid.toString());
     }
 }
