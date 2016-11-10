@@ -122,6 +122,16 @@ Metadata is stored as JSON and key fields include
 1. Create a bigger storage pool cluster
 2. Push files from one pool to other using the same process flow.
 
+## Backup
 
+An option
+
+1. Create a mirror storage pool cluster
+2. Listen to file notifications and push to mirror
+
+## Replication
+
+Not supported at the moment.
+ 
 
 
