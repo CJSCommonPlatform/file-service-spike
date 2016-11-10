@@ -124,14 +124,4 @@ Metadata is stored as JSON and key fields include
 
 ## Backup
 
-An option
-
-1. Create a mirror storage pool cluster
-2. Listen to file notifications and push to mirror
-
-## Replication
-
-Not supported at the moment.
- 
-
 
