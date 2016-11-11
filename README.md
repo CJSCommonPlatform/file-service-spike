@@ -29,6 +29,59 @@ The actual file name is stored as meta data
 
 The file is stored as blob with UUID as name
 
+### Testing PUT
+
+### Availability
+
+HTTP GET to see if the service is available
+
+curl -v http://localhost:8080/file-service/put
+
+TRACE of operation
+
+```curl
+> GET /file-service/put HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.48.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Length: 5
+< Date: Fri, 11 Nov 2016 14:35:25 GMT
+<
+v-1.0
+```
+
+### Transfer
+
+HTTP PUT to transfer the file
+
+curl -v http://localhost:8080/file-service/put --upload-file file-service.png
+
+TRACE of operation
+
+```curl
+> PUT /file-service/put HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.48.0
+> Accept: */*
+> Content-Length: 60660
+> Expect: 100-continue
+>
+< HTTP/1.1 100 Continue
+< Content-Length: 0
+* We are completely uploaded and fine
+< HTTP/1.1 200 OK
+< Connection: keep-alive
+< Content-Length: 0
+< Date: Fri, 11 Nov 2016 15:33:10 GMT
+<
+3040c7b6-0c6d-4582-8ff9-d8fa31ea2d8b
+```
+
+3040c7b6-0c6d-4582-8ff9-d8fa31ea2d8b is the UUID used to retrieve the file
+
 ### GET File
 
 Get an object from the file store using the token (UUID)
@@ -108,13 +161,16 @@ Metadata is stored as JSON and key fields include
 ## Setup
 1. Create DFS Storage Pool
 2. Create fixed number of directories in storage pool, suffixed by number, following a pattern
-   Example: dir-1, dir-2 dir-3....
+   Example: dir-0, dir-1 dir-2....
 
 ## Important
+
+** The directory names should follow the pattern 0, 1, 2 ... **
 
 ** The directory structure is considered frozen once in use **
 
 ** The number of directories once in use cannot be changed without "Migration" **
+
 
 
 ## Migration
@@ -124,4 +180,4 @@ Metadata is stored as JSON and key fields include
 
 ## Backup
 
-
+Backup DFS
