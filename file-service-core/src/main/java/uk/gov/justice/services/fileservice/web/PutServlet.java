@@ -33,11 +33,11 @@ public class PutServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private final DirectoryScanner scanner = new DirectoryScanner();
+    private final transient DirectoryScanner scanner = new DirectoryScanner();
 
     private DirectoryPath directoryPath;
 
-    private transient Logger LOG = LoggerFactory.getLogger(PutServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PutServlet.class);
 
     @Override
     public void init() {
@@ -56,12 +56,7 @@ public class PutServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
                     throws ServletException, IOException {
-        final OutputStream os = response.getOutputStream();
-        try {
-            os.write("v-1.0".getBytes());
-        } finally {
-            os.close();
-        }
+        response.getOutputStream().write("v-1.0".getBytes());        
     }
 
     @Override
@@ -69,8 +64,8 @@ public class PutServlet extends HttpServlet {
                     throws ServletException, IOException {
         final int length = request.getContentLength();
         FileOperation fop;
-        CountingInputStream cin = new CountingInputStream(request.getInputStream());
         try {
+            CountingInputStream cin = new CountingInputStream(request.getInputStream());
             if (length > 0 && length < 1024000) {
                 fop = new SmallFileWriteable(cin, directoryPath, UUID.randomUUID());
             } else {
@@ -91,7 +86,7 @@ public class PutServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            LOG.error(format("Error processing request", e));
+            LOG.error("Error processing request", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
