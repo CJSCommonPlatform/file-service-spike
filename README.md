@@ -19,41 +19,21 @@ Get UUID, pass it through the consistent hash, get directory, return file in res
 ## REST API
 
 
-### PUT File
+### PUT File 
+
+URL: /put
 
 Put an object to the file store.
 
 This operation returns a token (UUID).
 
-The actual file name is stored as meta data
-
 The file is stored as blob with UUID as name
 
 ### Testing PUT
 
-### Availability
+**Use HTTPS, the below is a sample only**
 
-HTTP GET to see if the service is available
-
-curl -v http://localhost:8080/file-service/put
-
-TRACE of operation
-
-```curl
-> GET /file-service/put HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/7.48.0
-> Accept: */*
->
-< HTTP/1.1 200 OK
-< Connection: keep-alive
-< Content-Length: 5
-< Date: Fri, 11 Nov 2016 14:35:25 GMT
-<
-v-1.0
-```
-
-### Transfer
+#### File Transfer
 
 HTTP PUT to transfer the file
 
@@ -74,7 +54,7 @@ TRACE of operation
 * We are completely uploaded and fine
 < HTTP/1.1 200 OK
 < Connection: keep-alive
-< Content-Length: 0
+< Content-Length: 36
 < Date: Fri, 11 Nov 2016 15:33:10 GMT
 <
 3040c7b6-0c6d-4582-8ff9-d8fa31ea2d8b
@@ -82,13 +62,28 @@ TRACE of operation
 
 3040c7b6-0c6d-4582-8ff9-d8fa31ea2d8b is the UUID used to retrieve the file
 
+### PUT File and encrypt 
+
+URL: /put/encrypt
+
+Put an object to the file store and encrypt on disk.
+
+This operation returns a token (UUID).
+
+The file is stored as an encrypted blob with UUID as name
+
 ### GET File
+
+URL: /get/{UUID}
 
 Get an object from the file store using the token (UUID)
 
-### DELETE File
+### GET File Hash
 
-Delete an object in the file store using the token (UUID)
+URL: /get/hash/{UUID}
+
+Get the SHA512 hex hash of an object from the file store using the token (UUID)
+
 
 ### POST keywords
 
@@ -120,7 +115,7 @@ Metadata is stored as JSON and key fields include
 | ------------------ |:-----------------------:| -----:|
 | Content-Type       | application/msword      | The content type from the headers |
 | Content-Length     | 1200                    | The content type from the headers | 
-| File-Name           | witnessstatements.doc  | The actual file name |
+| File-Name          | witnessstatements.doc  | The actual file name |
 
 
 ## Supported Content Types
@@ -165,7 +160,7 @@ Metadata is stored as JSON and key fields include
 
 ## Important
 
-** The directory names should follow the pattern 0, 1, 2 ... **
+** The directory names should end with the pattern 0, 1, 2 ... **
 
 ** The directory structure is considered frozen once in use **
 
