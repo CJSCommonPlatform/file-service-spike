@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="file-store-001" author="TechPod"
+               logicalFilePath="001-file-store.db.changelog.xml">
+
+        <!-- file service to create and populate-->
+        <createTable tableName="metadata">
+
+            <!-- create before storing a random UUID -->
+            <column name="file_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!--should come on request-->
+            <column name="owning_context_user" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <!--default to be now on the repository code-->
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- file service to update this field based on input file name-->
+            <column name="file_name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- file service should inspect request header and populate this information-->
+            <column name="content_type" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- file service should inspect request header and populate this information-->
+            <column name="content_encoding" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- file service should inspect request header and populate this information-->
+            <column name="content_length" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- file service should inspect request header and create hash based on content (include header?)-->
+            <column name="content_md5" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Files marked for deletion done later  -->
+            <column name="to_be_deleted_on" type="TIMESTAMP" >
+                <constraints nullable="true"/>
+            </column>
+
+            <!-- Files deleted time done later -->
+            <column name="deleted_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+
+            <!-- Filled at a later time when 2 phase commit is done -->
+            <column name="committed_event_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+
+            <!-- Filled at a later time when 2 phase commit is done -->
+            <column name="committed_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+
+            <!-- place holder for json if required any security headers-->
+            <column name="file_metadata" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="metadata"
+                             columnNames="file_id"
+                             constraintName="fiie_id_constraint"/>
+
+    </changeSet>
+
+</databaseChangeLog>
