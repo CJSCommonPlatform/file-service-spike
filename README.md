@@ -1,5 +1,5 @@
 # File Service
-A file service with a REST API
+A file service with a HTTP/S API
 
 ## Status
 Work in Progress
@@ -16,7 +16,11 @@ Get UUID, pass it through the consistent hash, get directory, return file in res
 ![storage](file-service.png)
 
 
-## REST API
+### Security
+
+Apply firewalls and authentication/authorisation to secure various zones and expose only required API calls.
+
+## HTTP/S API
 
 
 ### PUT File 
@@ -28,6 +32,12 @@ Put an object to the file store.
 This operation returns a token (UUID).
 
 The file is stored as blob with UUID as name
+
+** Recommended flow from a client perspective **
+<ol>
+    <li>PUT file, returns UUID</li>
+    <li>GET file hash, check hash is as expected </li>
+</ol>
 
 ### Testing PUT
 
@@ -64,6 +74,8 @@ TRACE of operation
 
 ### PUT File and encrypt 
 
+** Consider maybe using an encrypted file system and use the plain /put **
+
 URL: /put/encrypt
 
 Put an object to the file store and encrypt on disk.
@@ -72,17 +84,19 @@ This operation returns a token (UUID).
 
 The file is stored as an encrypted blob with UUID as name
 
-### GET File
+### POST Form
 
-URL: /get/{UUID}
+Posting a multi-part form to the file store.
 
-Get an object from the file store using the token (UUID)
+Component-B options.
 
-### GET File Hash
+<ul>
+    <li>Standalone</li>
+    <li>Co-locate on context-a ( callback URL not required in Forms )</li>
+    <li>Co-locate on component-c</li>
+</ul>
 
-URL: /get/hash/{UUID}
-
-Get the SHA512 hex hash of an object from the file store using the token (UUID)
+![storage](file-post.png)
 
 
 ### POST keywords
@@ -92,6 +106,20 @@ Post keywords about an object in the file store.
 This operation requires a token (UUID).
 
 The keywords will be indexed and used for file search/retrieval.
+
+### GET File
+
+URL: /get/{UUID}
+
+Get an object from the file store using the token (UUID)
+
+
+### GET File Hash
+
+URL: /get/hash-sha-256/{UUID}
+
+Get the SHA-256 hex hash of an object from the file store using the token (UUID)
+
 
 ### SEARCH File
 
@@ -167,11 +195,14 @@ Metadata is stored as JSON and key fields include
 ** The number of directories once in use cannot be changed without "Migration" **
 
 
-
 ## Migration
 
 1. Create a bigger storage pool cluster
 2. Push files from one pool to other using the same process flow.
+
+## Replication
+
+Geo distributed DFS
 
 ## Backup
 
