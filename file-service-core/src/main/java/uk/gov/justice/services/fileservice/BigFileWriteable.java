@@ -73,7 +73,7 @@ public class BigFileWriteable implements FileOperation {
     public void execute() {
         Optional.ofNullable(observer).ifPresent(s -> s.beginExecution());
         try {
-            final String fileName = new FileLookup(directoryPath).getFileName(getUUID());
+            final String fileName = new FileLookup(directoryPath).getTemporaryFileName(getUUID());
             try (final FileOutputStream fos = new FileOutputStream(new File(fileName), false)) {
                 IOUtils.copyLarge(inputStream, fos);
             }

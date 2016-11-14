@@ -75,7 +75,7 @@ public class SmallFileWriteable implements FileOperation {
     public void execute() {
         Optional.ofNullable(observer).ifPresent(s -> s.beginExecution());
         try {
-            final String fileName = new FileLookup(directoryPath).getFileName(getUUID());
+            final String fileName = new FileLookup(directoryPath).getTemporaryFileName(getUUID());
             final ByteBuffer buf = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
             try (final FileOutputStream fos = new FileOutputStream(new File(fileName), false);
                             final FileChannel channel = fos.getChannel()) {

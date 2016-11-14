@@ -21,7 +21,7 @@ public class SmallFileWriteableTest {
     @Rule
     public TemporaryFolder storagePoolLocation = new TemporaryFolder();
 
-    private final DirectoryScanner scanner = new DirectoryScanner();
+    private DirectoryScanner scanner;
 
     private DirectoryPath directoryPath;
 
@@ -29,7 +29,10 @@ public class SmallFileWriteableTest {
     public void before() throws IOException {
         storagePoolLocation.newFolder("dir-0");
         storagePoolLocation.newFolder("dir-1");
+        scanner = new DirectoryScanner();
         directoryPath = scanner.scan(storagePoolLocation.getRoot(), "dir-");
+        TempDirectoryBuilder tempDirBuilder = new TempDirectoryBuilder();
+        tempDirBuilder.createTempDirectories(directoryPath);        
     }
 
     @Test
@@ -53,7 +56,7 @@ public class SmallFileWriteableTest {
 
         assertTrue(fop.isSuccess());
 
-        final String fileName = new FileLookup(directoryPath).getFileName(fileUUID);
+        final String fileName = new FileLookup(directoryPath).getTemporaryFileName(fileUUID);
 
         final String actual = new String(Files.readAllBytes(Paths.get(fileName)));
 
@@ -83,7 +86,7 @@ public class SmallFileWriteableTest {
 
         assertTrue(fop.isSuccess());
 
-        final String fileName = new FileLookup(directoryPath).getFileName(fileUUID);
+        final String fileName = new FileLookup(directoryPath).getTemporaryFileName(fileUUID);
         
         final byte actual[] = Files.readAllBytes(Paths.get(fileName));
 

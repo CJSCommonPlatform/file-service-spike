@@ -26,6 +26,8 @@ public class BigFileWriteableTest {
         storagePoolLocation.newFolder("dir-0");
         storagePoolLocation.newFolder("dir-1");
         directoryPath = scanner.scan(storagePoolLocation.getRoot(), "dir-");
+        TempDirectoryBuilder tempDirBuilder = new TempDirectoryBuilder();
+        tempDirBuilder.createTempDirectories(directoryPath);        
     }
 
     @Test
@@ -48,7 +50,7 @@ public class BigFileWriteableTest {
 
         assertTrue(fop.isSuccess());
 
-        final String fileName = new FileLookup(directoryPath).getFileName(fileUUID);
+        final String fileName = new FileLookup(directoryPath).getTemporaryFileName(fileUUID);
         
         final long actual = new File(fileName).length();
 

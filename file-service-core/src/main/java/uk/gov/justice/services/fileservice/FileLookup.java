@@ -41,4 +41,18 @@ public class FileLookup {
                         valueOf(getBucket(uuid, directoryPath.getNumberDirectories())), "/",
                         uuid.toString());
     }
+    
+    /**
+     * Get the file name used to persist a file.
+     * 
+     * @param uuid to use
+     * @param directoryPath to use
+     * @return the file name
+     */
+    public String getTemporaryFileName(final UUID uuid) {
+        return join("", directoryPath.getDirectoryPath(),
+                        valueOf(getBucket(uuid, directoryPath.getNumberDirectories())), 
+                        "/temp/",
+                        uuid.toString());
+    }
 }

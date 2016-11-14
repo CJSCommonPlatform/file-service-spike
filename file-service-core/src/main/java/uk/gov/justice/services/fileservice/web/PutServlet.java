@@ -5,8 +5,13 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -15,18 +20,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.input.CountingInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import uk.gov.justice.services.fileservice.AtomicMover;
 import uk.gov.justice.services.fileservice.BigFileWriteable;
+import uk.gov.justice.services.fileservice.Digester;
 import uk.gov.justice.services.fileservice.DirectoryPath;
 import uk.gov.justice.services.fileservice.DirectoryScanner;
+import uk.gov.justice.services.fileservice.FileLookup;
 import uk.gov.justice.services.fileservice.FileOperation;
 import uk.gov.justice.services.fileservice.FileOperator;
 import uk.gov.justice.services.fileservice.SmallFileWriteable;
+import uk.gov.justice.services.fileservice.TempDirectoryBuilder;
 
 @WebServlet(name = "putServlet", urlPatterns = {"/put"})
 public class PutServlet extends HttpServlet {
@@ -37,7 +45,7 @@ public class PutServlet extends HttpServlet {
 
     private DirectoryPath directoryPath;
 
-    private transient Logger LOG = LoggerFactory.getLogger(PutServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PutServlet.class);
 
     @Override
     public void init() {
@@ -51,6 +59,15 @@ public class PutServlet extends HttpServlet {
         }
 
         directoryPath = scanner.scan(new File(storagePool), directoryPrefix);
+
+        new TempDirectoryBuilder().createTempDirectories(directoryPath);
+
+        try {
+            MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("SHA-256 not available ?", e);
+            throw new IllegalStateException("SHA-256 not available ?");
+        }
     }
 
     @Override
@@ -64,34 +81,72 @@ public class PutServlet extends HttpServlet {
         }
     }
 
+    private boolean compareMessageDigest(final File file, final MessageDigest toCompare) throws Exception {
+        MessageDigest md= new Digester().getMessageDigest(file, "SHA-256");
+        return Arrays.equals(toCompare.digest(), md.digest());
+    }
+
     @Override
     protected void doPut(final HttpServletRequest request, final HttpServletResponse response)
                     throws ServletException, IOException {
+        
         final int length = request.getContentLength();
+        
         FileOperation fop;
-        CountingInputStream cin = new CountingInputStream(request.getInputStream());
+        
+        MessageDigest sha256;
+        
         try {
+            sha256 = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("SHA-256 not available ?", e);
+            throw new IllegalStateException("SHA-256 not available ?");
+        }
+        
+        final DigestInputStream din =
+                        new DigestInputStream((InputStream) request.getInputStream(), sha256);
+        try {
+
+            final UUID uuid = UUID.randomUUID();
+
             if (length > 0 && length < 1024000) {
-                fop = new SmallFileWriteable(cin, directoryPath, UUID.randomUUID());
+                fop = new SmallFileWriteable(din, directoryPath, uuid);
             } else {
-                fop = new BigFileWriteable(cin, directoryPath, UUID.randomUUID());
+                fop = new BigFileWriteable(din, directoryPath, uuid);
             }
 
             FileOperator.op().execute(fop);
 
-            // basic integrity check
-            if (cin.getByteCount() == fop.getFileLength()) {
+            new AtomicMover().atomicMove(directoryPath, uuid);
+
+            final File file = new File(new FileLookup(directoryPath).getFileName(uuid));
+
+            if (!file.exists()) {
+
+                LOG.error(format("Atomic move failed but did not throw an exception for UUID %s",
+                                uuid.toString()));
+
+                handleErrorResponse("Unknown error while processing request", null, response);
+
+                return;
+            }
+
+            if (compareMessageDigest(file, sha256)) {
+                
                 handleResponse(fop, response);
+                
             } else {
-                handleErrorResponse(
-                                format("Error processing UUID %s input size %s does not match file size %s",
-                                                fop.getUUID().toString(), cin.getByteCount(),
-                                                fop.getFileLength()),
-                                null, response);
+
+                LOG.error(format("Message digest check failed for UUID %s",
+                                uuid.toString()));
+
+                handleErrorResponse("Unknown error while processing request.", null, response);
             }
 
         } catch (Exception e) {
+            
             LOG.error(format("Error processing request", e));
+        
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

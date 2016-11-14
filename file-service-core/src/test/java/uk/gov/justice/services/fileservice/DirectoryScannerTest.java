@@ -17,11 +17,44 @@ public class DirectoryScannerTest {
 
     private final DirectoryScanner scanner = new DirectoryScanner();
 
-    @Test
-    public void shouldScanTheStoragePoolAndReturnDirectoryPath() throws IOException {
+    @Test(expected=IllegalArgumentException.class)
+    public void shouldFailAsDirZeroIsAbsent() throws IOException {
 
         storagePoolLocation.newFolder("dir-1");
         storagePoolLocation.newFolder("dir-2");
+
+        final DirectoryPath directoryPath = scanner.scan(storagePoolLocation.getRoot(), "dir-");
+
+        assertEquals(join("", storagePoolLocation.getRoot().getAbsolutePath(), "/", "dir-"),
+                        directoryPath.getDirectoryPath());
+        
+        assertEquals("dir-", directoryPath.getDirectoryNamePrefix());
+        
+        assertEquals(2, directoryPath.getNumberDirectories());
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void shouldFailAsDirOneIsAbsent() throws IOException {
+
+        storagePoolLocation.newFolder("dir-0");
+        storagePoolLocation.newFolder("dir-2");
+
+        final DirectoryPath directoryPath = scanner.scan(storagePoolLocation.getRoot(), "dir-");
+
+        assertEquals(join("", storagePoolLocation.getRoot().getAbsolutePath(), "/", "dir-"),
+                        directoryPath.getDirectoryPath());
+        
+        assertEquals("dir-", directoryPath.getDirectoryNamePrefix());
+        
+        assertEquals(2, directoryPath.getNumberDirectories());
+    }
+
+    
+    @Test
+    public void shouldScanTheStoragePoolAndReturnDirectoryPath() throws IOException {
+
+        storagePoolLocation.newFolder("dir-0");
+        storagePoolLocation.newFolder("dir-1");
 
         final DirectoryPath directoryPath = scanner.scan(storagePoolLocation.getRoot(), "dir-");
 

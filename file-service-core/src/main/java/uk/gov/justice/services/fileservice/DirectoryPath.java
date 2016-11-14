@@ -96,5 +96,6 @@ public class DirectoryPath implements Serializable {
     public String getDirectoryPath() {
         return join("", getStoragePoolLocation(), "/", getDirectoryNamePrefix());
     }
+    
 
 }
