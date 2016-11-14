@@ -12,7 +12,6 @@ Create UUID, pass it through the consistent hash and store file in directory, re
 
 Get UUID, pass it through the consistent hash, get directory, return file in response.
 
-
 ![storage](file-service.png)
 
 
@@ -193,6 +192,28 @@ Metadata is stored as JSON and key fields include
 ** The directory structure is considered frozen once in use **
 
 ** The number of directories once in use cannot be changed without "Migration" **
+
+## Clustering
+
+This follows the same pattern as the directories and the number of nodes in the cluster are fixed. 
+So consistent hash can work correctly.
+
+So for example a cluster comprised of 3 nodes could follow the pattern 
+fileserver-0.domain.co.uk, fileserver-1.domain.co.uk, fileserver-2.domain.co.uk.
+
+![file-cluster](file-cluster.png)
+
+Each node also has a locking mechanism to serialise access to a specific file (UUID). 
+ 
+So routing to a specific node is required to make use of this locking mechanism, achieving  a cluster wide lock on any file UUID. 
+
+### Stickiness of UUIDs
+
+* Each node receives the request (create/update/get/..)
+* Runs the file UUID through the consistent hash
+* Then
+    * If it owns the UUID, completes the request
+    * If it does not, requests the operation from the owning node and returns the response. 
 
 
 ## Migration
