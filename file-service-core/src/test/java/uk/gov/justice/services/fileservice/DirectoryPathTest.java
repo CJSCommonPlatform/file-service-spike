@@ -9,14 +9,14 @@ public class DirectoryPathTest {
     @Test
     public void shouldGetDefaultFilesystemPrefix() {
         final DirectoryPath dp = new DirectoryPath();
-        assertEquals(dp.getStoragePoolLocation(), "/gluster-storage/");
+        assertEquals(dp.getStoragePoolLocation(), "/gluster-storage");
     }
 
     @Test
     public void shouldSetFilesystemPrefix() {
         final DirectoryPath dp = new DirectoryPath();
-        dp.setStoragePoolLocation("/test/");
-        assertEquals(dp.getStoragePoolLocation(), "/test/");
+        dp.setStoragePoolLocation("/test");
+        assertEquals(dp.getStoragePoolLocation(), "/test");
     }
     
     @Test

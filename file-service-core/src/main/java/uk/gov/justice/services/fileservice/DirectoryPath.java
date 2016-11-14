@@ -12,7 +12,7 @@ public class DirectoryPath {
     /**
      * The Storage Pool Location
      */
-    private String storagePoolLocation = "/gluster-storage/";
+    private String storagePoolLocation = "/gluster-storage";
 
     /**
      * The directory name prefix
@@ -38,8 +38,9 @@ public class DirectoryPath {
      * 
      * @param filesystemPrefix location of the glusterfs storage pool
      */
-    public void setStoragePoolLocation(final String storagePoolLocation) {
+    public DirectoryPath setStoragePoolLocation(final String storagePoolLocation) {
         this.storagePoolLocation = storagePoolLocation;
+        return this;
     }
 
     /**
@@ -56,8 +57,9 @@ public class DirectoryPath {
      * 
      * @param directoryNamePrefix for a directory
      */
-    public void setDirectoryNamePrefix(final String directoryNamePrefix) {
+    public DirectoryPath setDirectoryNamePrefix(final String directoryNamePrefix) {
         this.directoryNamePrefix = directoryNamePrefix;
+        return this;
     }
 
     /**
@@ -74,8 +76,9 @@ public class DirectoryPath {
      * 
      * @param numberDirectories
      */
-    public void setNumberDirectories(final int numberDirectories) {
+    public DirectoryPath setNumberDirectories(final int numberDirectories) {
         this.numberDirectories = numberDirectories;
+        return this;
     }
 
     /**
@@ -84,7 +87,7 @@ public class DirectoryPath {
      * @return the partial prefix to a directory
      */
     public String getDirectoryPath() {
-        return join("", getStoragePoolLocation(), getDirectoryNamePrefix());
+        return join("", getStoragePoolLocation(), "/", getDirectoryNamePrefix());
     }
 
 }
